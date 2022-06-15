@@ -11,7 +11,7 @@ To deploy this app, build the jar first and then run using java cmd or via docke
   - Execute the following commands:
  
         cd User
-        ./gradlew build
+        ./gradlew bootJar
    
   - Find "User-0.0.1-SNAPSHOT.jar" in build/libs directory
 
