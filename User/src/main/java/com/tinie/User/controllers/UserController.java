@@ -1,7 +1,6 @@
 package com.tinie.User.controllers;
 
 import com.tinie.User.repositories.UserDetailsRepository;
-import com.tinie.User.requests.GetUserRequest;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -9,10 +8,9 @@ import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,8 +26,8 @@ public class UserController {
     /**
      * Get a user's details from the database given their phone number
      * @param httpServletRequest An object of type {@link HttpServletRequest} containing all the information about the request.
-     * @param requestBody {@link GetUserRequest} containing phone number
-     * @return A {@link Response} whose payload is an {@link GetUserRequest}.
+     * @param phoneNumber Phone number of User
+     * @return A {@link Response} whose payload is an {@link Map}.
      * */
     @GetMapping("get-user-detail")
     @ApiOperation(value = "Read User details from database")
@@ -39,22 +37,21 @@ public class UserController {
             @ApiResponse(code = 404, message = "USER NOT FOUND")
     })
     public ResponseEntity<?> getUserDetails(HttpServletRequest httpServletRequest,
-                                            BindingResult bindingResult,
-                                            @RequestBody GetUserRequest requestBody) {
+                                            @RequestParam("phonenumber") long phoneNumber) {
 
-        if(bindingResult.hasErrors()){
+        if(phoneNumber < 1){
             return ResponseEntity.badRequest().body(
-                    Map.of("phonenumber", requestBody.getPhonenumber(),
+                    Map.of("phonenumber", phoneNumber,
                             "action", "",
                             "readstatus", "NOK")
             );
         }
 
-        var dbResponse = userDetailsRepository.findByPhoneNumber(requestBody.getPhonenumber());
+        var dbResponse = userDetailsRepository.findByPhoneNumber(phoneNumber);
 
         if (dbResponse.isEmpty())
             return new ResponseEntity<>(Map.of(
-                    "phonenumber", requestBody.getPhonenumber(),
+                    "phonenumber", phoneNumber,
                     "action", "Register",
                     "readstatus", "NOK"
             ), HttpStatus.NOT_FOUND);
