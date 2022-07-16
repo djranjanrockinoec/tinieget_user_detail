@@ -18,10 +18,10 @@ import javax.persistence.Table;
 public class UserDetails {
 
     @Id
-    @Column(name = "phonenumber")
+    @Column(name = "phone_number")
     private long phoneNumber;
 
-    @Column(name = "username", nullable = false)
+    @Column(name = "user_name", nullable = false)
     private String username;
 
     @Override
